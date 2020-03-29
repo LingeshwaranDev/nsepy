@@ -141,9 +141,10 @@ class URLFetch:
 
         if not session:
             self.session = requests.Session()
+            self.session.max_redirects = 60
         else:
             self.session = session
-
+            self.session.max_redirects = 60
         if headers:
             self.session.headers.update(headers)
         if proxy:
@@ -162,8 +163,13 @@ class URLFetch:
     def __call__(self, *args, **kwargs):
         u = urlparse(self.url)
         self.session.headers.update({'Host': u.hostname})
+        print "blah"
+        print self.session.headers
         url = self.url%(args)
+
         if self.method == 'get':
+            print url
+            print kwargs
             return self.session.get(url, params=kwargs, proxies = self.proxy )
         elif self.method == 'post':
             if self.json:
